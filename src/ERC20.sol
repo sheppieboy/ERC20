@@ -17,6 +17,15 @@ contract ERC20 is IERC20 {
         _mint(msg.sender, _totalSupply);
     }
 
+    //external functions
+    function approve(address spender, uint256 value) public virtual returns (bool) {
+        address owner = msg.sender;
+        _approve(owner, spender, value);
+        return true;
+    }
+
+    //private and internal functions
+
     //public view functions
     function name() public view virtual returns (string memory) {
         return name;
