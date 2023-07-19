@@ -5,7 +5,7 @@ import "./IERC20.sol";
 
 contract ERC20 is IERC20 {
     uint256 private totalSupply;
-    mapping(address owner => uint256 amount) private balanceOf;
+    mapping(address owner => uint256 amount) private balances;
     mapping(address owner => mapping(address spender => uint256 amount)) private allowance;
     string private name;
     string private symbol;
@@ -15,5 +15,30 @@ contract ERC20 is IERC20 {
         balanceOf[msg.sender] += _totalSupply;
         totalSupply = _totalSupply;
         _mint(msg.sender, _totalSupply);
+    }
+
+    //public view functions
+    function name() public view virtual returns (string memory) {
+        return name;
+    }
+
+    function symbol() public view virtual returns (string memory) {
+        return symbol;
+    }
+
+    function totalSupply() public view virtual returns (uint256) {
+        return totalSupply;
+    }
+
+    function decimals() public view virtual returns (uint256) {
+        return decimals;
+    }
+
+    function balanceOf(address account) public view virtual returns (uint256) {
+        return balances[account];
+    }
+
+    function allowance(address owner, address spender) public view virtual returns (uint256) {
+        return allowance[owner][spender];
     }
 }
