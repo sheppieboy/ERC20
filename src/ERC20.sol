@@ -15,3 +15,12 @@ interface IERC20 {
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
+
+contract ERC20 is IERC20 {
+    uint256 public totalSupply;
+    mapping(address owner => uint256 amount) public balanceOf;
+    mapping(address owner => mapping(address spender => uint256 amount)) public allowance;
+    string public name = "ERCCCCCCC20000";
+    string public symbol = "ERC20";
+    uint8 public decimals = 18;
+}
