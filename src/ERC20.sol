@@ -1,26 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-interface IERC20 {
-    function totalSupply() external view returns (uint256);
-
-    function balanceOf(address recipient) external view returns (uint256);
-
-    function transfer(address recipient, uint256 amount) external returns (bool);
-
-    function allowance(address owner, address spender) external view returns (uint256);
-
-    function transferFrom(address sender, address recipient, uint256 amount) external view returns (bool);
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-}
+import "./IERC20.sol";
 
 contract ERC20 is IERC20 {
-    uint256 public totalSupply;
-    mapping(address owner => uint256 amount) public balanceOf;
-    mapping(address owner => mapping(address spender => uint256 amount)) public allowance;
-    string public name = "ERCCCCCCC20000";
-    string public symbol = "ERC20";
+    uint256 private totalSupply;
+    mapping(address owner => uint256 amount) private balanceOf;
+    mapping(address owner => mapping(address spender => uint256 amount)) private allowance;
+    string private name;
+    string private symbol;
     uint8 public decimals = 18;
+
+    constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {
+        balanceOf[msg.sender] += _totalSupply;
+        totalSupply = _totalSupply;
+        _mint(msg.sender, _totalSupply);
+    }
 }
