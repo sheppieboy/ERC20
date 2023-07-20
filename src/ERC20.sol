@@ -29,23 +29,23 @@ contract ERC20 {
     //external functions
     function approve(address spender, uint256 value) public virtual returns (bool) {
         address owner = msg.sender;
-        _approve(owner, spender, value);
+        return _approve(owner, spender, value);
     }
 
     function transfer(address to, uint256 value) public virtual returns (bool) {
         address owner = msg.sender;
-        _transfer(owner, to, value);
+        return _transfer(owner, to, value);
     }
 
     function transferFrom(address from, address to, uint256 value) public virtual returns (bool) {
         address spender = msg.sender;
         _spendAllowance(from, spender, value);
-        _transfer(from, to, value);
+        return _transfer(from, to, value);
     }
 
     function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
         address owner = msg.sender;
-        _approve(owner, spender, allowance(owner, spender) + addedValue);
+        return _approve(owner, spender, allowance(owner, spender) + addedValue);
     }
 
     function decreaseAllowance(address spender, uint256 requestedDecrease) public virtual returns (bool) {
@@ -56,21 +56,24 @@ contract ERC20 {
         }
 
         unchecked {
-            _approve(owner, spender, currentAllowance - requestedDecrease);
+            return _approve(owner, spender, currentAllowance - requestedDecrease);
         }
     }
 
     //private and internal functions
 
-    function _transfer(address from, address to, uint256 value) internal virtual {
-        if (from == address(0)) {
+    function _transfer(address _from, address _to, uint256 _value) internal virtual returns (bool) {
+        if (_from == address(0)) {
             revert InvalidAddress(address(0));
         }
-        if (to == address(0)) {
+        if (_to == address(0)) {
             revert InvalidAddress(address(0));
         }
-        _update(from, to, value);
+        _update(_from, _to, _value);
         //transfer
+        (bool success,) = _to.call{value: _value}("");
+        require(success, "Failed to transfer ERC20 token");
+        return success;
     }
 
     function _update(address from, address to, uint256 value) internal virtual {
