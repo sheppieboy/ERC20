@@ -30,17 +30,34 @@ contract ERC20 is IERC20 {
     function transfer(address to, uint256 value) public virtual returns (bool) {
         address owner = msg.sender;
         _transfer(owner, to, value);
+        return true;
     }
 
     function transferFrom(address from, address to, uint256 value) public virtual returns (bool) {
         address spender = msg.sender;
         _spendAllowance(from, spender, value);
         _transfer(form, to, value);
+        return true;
     }
 
     function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
         address owner = msg.sender;
         _approve(owner, spender, allowance(owner, spender) + addedValue);
+        return true;
+    }
+
+    function decreaseAllowance(address spender, uint256 requestedDecrease) public virtual returns (bool) {
+        address owner = msg.sender;
+        uint256 currentAllowance = allowance(owner, spender);
+        if (currentAllowance < requestedDecrease) {
+            revert FailedDecreaseAllowance(spender, currentAllowance - requestedDecrease);
+        }
+
+        unchecked {
+            _approve(owner, spender, currentAllowance - requestedDecrease);
+        }
+
+        return true;
     }
 
     //private and internal functions
