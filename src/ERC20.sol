@@ -71,7 +71,6 @@ contract ERC20 {
         }
         _update(from, to, value);
         //transfer
-        //emit event Transfer
     }
 
     function _update(address from, address to, uint256 value) internal virtual {
@@ -81,6 +80,7 @@ contract ERC20 {
         }
         _balances[from] -= value;
         _balances[to] += value;
+        emit Transfer(from, to, value);
     }
 
     function _approve(address owner, address spender, uint256 value) internal virtual returns (bool) {
