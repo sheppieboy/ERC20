@@ -32,6 +32,12 @@ contract ERC20 is IERC20 {
         _transfer(owner, to, value);
     }
 
+    function transferFrom(address from, address to, uint256 value) public virtual returns (bool) {
+        address spender = msg.sender;
+        _spendAllowance(from, spender, value);
+        _transfer(form, to, value);
+    }
+
     //private and internal functions
 
     //public view functions
