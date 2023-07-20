@@ -7,6 +7,9 @@ error FailedDecreaseAllowance(address, uint256);
 error InsufficientAllowance(address, uint256, uint256);
 
 contract ERC20 {
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
     uint256 private _totalSupply;
     string private _name;
     string private _symbol;
@@ -20,7 +23,7 @@ contract ERC20 {
         _symbol = symbol_;
         _balances[msg.sender] += totalSupply_;
         _totalSupply = totalSupply_;
-        _mint(msg.sender, totalSupply_);
+        //_mint(msg.sender, totalSupply_);
     }
 
     //external functions
