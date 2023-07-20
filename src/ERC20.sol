@@ -62,7 +62,7 @@ contract ERC20 is IERC20 {
 
     //private and internal functions
 
-    function _transfer(address from, address to, uint256 value) internal {
+    function _transfer(address from, address to, uint256 value) internal virtual {
         if (from == address(0)) {
             revert InvalidAddress(address(0));
         }
@@ -70,6 +70,17 @@ contract ERC20 is IERC20 {
             revert InvalidAddress(address(0));
         }
         _update(from, to, value);
+        //transfer
+        //emit event Transfer
+    }
+
+    function _update(address from, address to, uint256 value) internal virtual {
+        uint256 fromBalance = _balances[from];
+        if (fromBalance < value) {
+            revert InsufficientBalance();
+        }
+        _balances[from] -= value;
+        _balances[to] += value;
     }
 
     //public view functions
