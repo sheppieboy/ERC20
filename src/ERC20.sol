@@ -62,6 +62,16 @@ contract ERC20 is IERC20 {
 
     //private and internal functions
 
+    function _transfer(address from, address to, uint256 value) internal {
+        if (from == address(0)) {
+            revert InvalidAddress(address(0));
+        }
+        if (to == address(0)) {
+            revert InvalidAddress(address(0));
+        }
+        _update(from, to, value);
+    }
+
     //public view functions
     function name() public view virtual returns (string memory) {
         return _name;
