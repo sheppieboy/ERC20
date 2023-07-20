@@ -38,6 +38,11 @@ contract ERC20 is IERC20 {
         _transfer(form, to, value);
     }
 
+    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
+        address owner = msg.sender;
+        _approve(owner, spender, allowance(owner, spender) + addedValue);
+    }
+
     //private and internal functions
 
     //public view functions
