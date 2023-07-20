@@ -4,6 +4,7 @@ pragma solidity 0.8.19;
 error InvalidAddress(address);
 error InsufficientBalance();
 error FailedDecreaseAllowance(address, uint256);
+error InsufficientAllowance(address, uint256, uint256);
 
 contract ERC20 {
     uint256 private _totalSupply;
@@ -19,33 +20,29 @@ contract ERC20 {
         _symbol = symbol_;
         _balances[msg.sender] += totalSupply_;
         _totalSupply = totalSupply_;
-        //_mint(msg.sender, totalSupply_);
+        _mint(msg.sender, totalSupply_);
     }
 
     //external functions
     function approve(address spender, uint256 value) public virtual returns (bool) {
         address owner = msg.sender;
         _approve(owner, spender, value);
-        return true;
     }
 
     function transfer(address to, uint256 value) public virtual returns (bool) {
         address owner = msg.sender;
         _transfer(owner, to, value);
-        return true;
     }
 
     function transferFrom(address from, address to, uint256 value) public virtual returns (bool) {
         address spender = msg.sender;
-        //_spendAllowance(from, spender, value);
+        _spendAllowance(from, spender, value);
         _transfer(from, to, value);
-        return true;
     }
 
     function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
         address owner = msg.sender;
         _approve(owner, spender, allowance(owner, spender) + addedValue);
-        return true;
     }
 
     function decreaseAllowance(address spender, uint256 requestedDecrease) public virtual returns (bool) {
@@ -58,8 +55,6 @@ contract ERC20 {
         unchecked {
             _approve(owner, spender, currentAllowance - requestedDecrease);
         }
-
-        return true;
     }
 
     //private and internal functions
@@ -85,7 +80,7 @@ contract ERC20 {
         _balances[to] += value;
     }
 
-    function _approve(address owner, address spender, uint256 value) internal virtual {
+    function _approve(address owner, address spender, uint256 value) internal virtual returns (bool) {
         if (owner == address(0)) {
             revert InvalidAddress(address(0));
         }
@@ -93,7 +88,18 @@ contract ERC20 {
             revert InvalidAddress(address(0));
         }
         _allowance[owner][spender] = value;
-        //emit Approval(owner, spender, value);
+        emit Approval(owner, spender, value);
+        return true;
+    }
+
+    function _spendAllowance(address owner, address spender, uint256 value) internal virtual {
+        uint256 currentAllowance = allowance(owner, spender);
+        if (currentAllowance < value) {
+            revert InsufficientAllowance(spender, currentAllowance, value);
+        }
+        unchecked {
+            _approve(owner, spender, currentAllowance - value);
+        }
     }
 
     //public view functions
