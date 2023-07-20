@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "./IERC20.sol";
+error InvalidAddress(address);
+error InsufficientBalance();
+error FailedDecreaseAllowance(address, uint256);
 
-contract ERC20 is IERC20 {
+contract ERC20 {
     uint256 private _totalSupply;
     string private _name;
     string private _symbol;
@@ -15,9 +17,9 @@ contract ERC20 is IERC20 {
     constructor(string memory name_, string memory symbol_, uint256 totalSupply_) {
         _name = name_;
         _symbol = symbol_;
-        balanceOf[msg.sender] += totalSupply_;
+        _balances[msg.sender] += totalSupply_;
         _totalSupply = totalSupply_;
-        _mint(msg.sender, totalSupply_);
+        //_mint(msg.sender, totalSupply_);
     }
 
     //external functions
@@ -35,8 +37,8 @@ contract ERC20 is IERC20 {
 
     function transferFrom(address from, address to, uint256 value) public virtual returns (bool) {
         address spender = msg.sender;
-        _spendAllowance(from, spender, value);
-        _transfer(form, to, value);
+        //_spendAllowance(from, spender, value);
+        _transfer(from, to, value);
         return true;
     }
 
@@ -81,6 +83,17 @@ contract ERC20 is IERC20 {
         }
         _balances[from] -= value;
         _balances[to] += value;
+    }
+
+    function _approve(address owner, address spender, uint256 value) internal virtual {
+        if (owner == address(0)) {
+            revert InvalidAddress(address(0));
+        }
+        if (spender == address(0)) {
+            revert InvalidAddress(address(0));
+        }
+        _allowance[owner][spender] = value;
+        //emit Approval(owner, spender, value);
     }
 
     //public view functions
